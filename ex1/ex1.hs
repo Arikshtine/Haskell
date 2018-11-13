@@ -1,19 +1,70 @@
-import Data.List(group, length)
-import Control.Monad(join)
+import Data.List(group)
 
 
---1. findNtConway
+---1)findNtConway
+
 countNumbers :: String -> String
-countNumbers n = join ([(show (length l)) ++ take 1(l) | l <- (group (n))])
+countNumbers n = concat ([(show (length l)) ++ take 1(l) | l <- (group (n))])
 
 findNtConway :: Int -> String
-findNtConway n = if n == 1 then "1" else (countNumbers (findNtConway(n-1)))
-
---2. Mylist
---data Drlist = a 	
+findNtConway 1 = "1"
+findNtConway n = if n > 1 then countNumbers (findNtConway(n-1)) else "ERROR"  
 
 
---3. elem: 
+---2)list
+data Mylist a = Emptylist | Add {list::Mylist a, value::a}  deriving (Show, Read, Eq, Ord) 
 
---elem' :: a -> [a] -> Bool 
---elem' a b = null [a == x | x <- b]
+tolist :: Mylist a -> [a]
+tolist Emptylist = []
+tolist (Add xs x) = (tolist xs) ++ [x]
+
+fromlist :: [a] -> Mylist a
+fromlist [] = Emptylist
+fromlist xs = Add (fromlist (init xs)) (last xs)
+
+
+---3)elem
+
+sum' :: (Num a) => [a] -> a
+sum' [] = 0
+sum' (x:xs) = x + (sum' xs)
+
+--1.
+elem' :: (Eq a) => a-> [a] -> Bool
+elem' t [] = False
+elem' t (x:xs) = (t==x) || (elem' t xs) 
+
+--2. 
+elem'' :: (Eq a) => a-> [a] -> Bool
+elem'' t [] = False
+elem'' t xs = if (sum' [if t==x then 1 else 0 | x <- xs]) >= 1 then True else False
+
+--3.
+elem''' :: (Eq a) => a-> [a] -> Bool
+elem''' t [] = False
+elem''' t xs = any (==t) xs
+
+
+---4) sublist
+
+sublst :: [a] -> Int -> Int -> [a]
+sublst [] i j = []
+sublst xs i j 
+       | i < 0 = []
+       | j >= length(xs) = []
+       | otherwise = drop i (take (j + 1) xs)
+
+
+---5) rooted tree
+data Tree t = Leaf {element:: t} | Node {element:: t, sons::[Tree t]} deriving (Show, Read, Eq) 
+
+sumtree :: (Num t) => Tree t -> t
+sumtree (Leaf t) = t
+sumtree t = (element t) + sum(map sumtree $ sons t)
+
+elemtree :: (Eq t) => Tree t -> t -> Bool
+elemtree (Leaf t) x = x == t 
+elemtree (Node t sons) x = x == t || sum(map elemtree sons)
+
+
+
