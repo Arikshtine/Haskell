@@ -26,7 +26,7 @@ fromlist xs = Add (fromlist (init xs)) (last xs)
 ---3)elem
 
 sum' :: (Num a) => [a] -> a
-sum' [] = 0
+sum' (x:[]) = x
 sum' (x:xs) = x + (sum' xs)
 
 --1.
@@ -56,15 +56,22 @@ sublst xs i j
 
 
 ---5) rooted tree
+sumbool :: [Bool] -> Bool
+sumbool [] = False
+sumbool (x:xs) = x || sumbool xs
+
 data Tree t = Leaf {element:: t} | Node {element:: t, sons::[Tree t]} deriving (Show, Read, Eq) 
 
 sumtree :: (Num t) => Tree t -> t
 sumtree (Leaf t) = t
 sumtree t = (element t) + sum(map sumtree $ sons t)
 
-elemtree :: (Eq t) => Tree t -> t -> Bool
-elemtree (Leaf t) x = x == t 
-elemtree (Node t sons) x = x == t || sum(map elemtree sons)
+elemtree :: (Eq t) => t -> Tree t -> Bool
+elemtree x (Leaf t) = x == t 
+elemtree x (Node t sons) = x == t || sumbool(map (elemtree x) sons)
+
+
+
 
 
 
